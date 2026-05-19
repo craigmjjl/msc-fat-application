@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="Local HTML form for FAT testing data capture">
+<meta name="author" content="Craig Moore - Sales & Drives Service Engineer at JJ Loughran Ltd">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MSC FAT">
+<meta name="theme-color" content="#181c24">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="Picture1.jpg">
+<title>MSC FAT Booklet – LV Switchboard Testing</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #074368;
+    --surface: #181c24;
+    --surface2: #1e2330;
+    --border: #2a3040;
+    --accent: #5ba8ff;
+    --accent2: #5ba8ff;
+    --danger: #e05252;
+    --success: #3ec97c;
+    --text: #d8dde8;
+    --text-dim: #d8dde8;
+    --text-bright: #f0f3fa;
+    --radius: 6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
+    padding: 0 24px;
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-brand {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 12px 0;
+    border-right: 1px solid var(--border);
+    padding-right: 24px;
+  }
+  .header-brand .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+  .header-brand .sub {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .header-info {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex: 1;
+    padding: 10px 0;
+  }
+  .header-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .header-field label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .header-field input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-bright);
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    width: 160px;
+    padding: 2px 0;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .header-field input:focus { border-bottom-color: var(--accent); }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: #ffffff; }
+  .btn-primary:hover { background: #f5b030; }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+  .btn-ghost:hover { border-color: var(--accent2); color: var(--accent2); }
+  .btn-danger { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
+  .btn-danger:hover { background: var(--danger); color: white; }
+
+  /* SAVE INDICATOR */
+  #save-status {
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  #save-status.saved { color: var(--success); }
+  #save-status .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  /* NAV TABS */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-btn .sec-num {
+    font-size: 9px;
+    background: var(--border);
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-right: 6px;
+  }
+  .tab-btn.active .sec-num { background: var(--accent); color: var(--bg); }
+
+  /* MAIN */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 24px;
+  }
+
+  /* SECTION */
+  .section-panel { display: none; }
+  .section-panel.active { display: block; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-number {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(from var(--accent) r g b / 0.1);
+    padding: 3px 10px;
+    border-radius: 3px;
+  }
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-bright);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .info-box {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* INSPECTION TABLES */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .card-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    background: var(--surface2);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(42,48,64,0.6);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .check-cell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .check-btn {
+    width: 28px; height: 28px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .check-btn:hover { border-color: var(--text-dim); }
+  .check-btn.pass { background: rgba(62,201,124,0.15); border-color: var(--success); color: var(--success); }
+  .check-btn.fail { background: rgba(224,82,82,0.15); border-color: var(--danger); color: var(--danger); }
+  .check-btn.checked { background: rgba(91,168,255,0.15); border-color: var(--accent2); color: var(--accent2); }
+
+  /* Radio yes/no */
+  .yn-group {
+    display: flex;
+    gap: 4px;
+  }
+  .yn-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 9px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .yn-btn.yes.active { background: rgba(62,201,124,0.15); border-color: var(--success); color: var(--success); }
+  .yn-btn.no.active { background: rgba(224,82,82,0.15); border-color: var(--danger); color: var(--danger); }
+
+  input[type="text"], input[type="date"], textarea, select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    padding: 5px 9px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  input[type="text"]:focus, input[type="date"]:focus, textarea:focus {
+    border-color: var(--accent2);
+  }
+  textarea { resize: vertical; min-height: 36px; }
+
+  .text-input-sm { width: 100px; }
+  .text-input-md { width: 150px; }
+
+  /* SIGNATURE AREA */
+  .sign-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .sign-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .sign-block label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 8px;
+  }
+  .sign-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 12px;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .sign-row input { font-size: 12px; }
+
+  /* DYNAMIC ROWS */
+  .add-row-btn {
+    margin-top: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.15s;
+  }
+  .add-row-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .del-row {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    transition: all 0.15s;
+  }
+  .del-row:hover { color: var(--danger); background: rgba(224,82,82,0.1); }
+
+  /* PROGRESS BAR */
+  .progress-strip {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .prog-seg {
+    flex: 1;
+    min-width: 40px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    transition: background 0.3s;
+  }
+  .prog-seg.done { background: var(--success); }
+  .prog-seg.active { background: var(--accent); }
+
+  /* FINAL CHECKLIST */
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .check-item:hover { border-color: var(--text-dim); }
+  .check-item.done { border-color: var(--success); background: rgba(62,201,124,0.05); }
+  .check-item .ci-icon {
+    width: 20px; height: 20px;
+    border-radius: 3px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    transition: all 0.15s;
+  }
+  .check-item.done .ci-icon { background: var(--success); border-color: var(--success); color: white; }
+  .check-item .ci-label { font-size: 13px; line-height: 1.3; }
+
+  /* COMMENTS */
+  .comment-table td:first-child { font-weight: 700; color: var(--accent); width: 40px; }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--success);
+    color: #ffffff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    padding: 10px 18px;
+    border-radius: var(--radius);
+    transform: translateY(60px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Ensure table inputs never clip text - wrap in cells */
+  td input[type="text"] {
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  td textarea {
+    min-width: 0;
+    width: 100%;
+    resize: vertical;
+  }
+  /* Description column in all tables - allow it to grow */
+  table td:first-child {
+    min-width: 120px;
+    word-break: break-word;
+  }
+
+  /* PHOTO TAB */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .photo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.2s;
+  }
+  .photo-card:hover { border-color: var(--accent2); }
+  .photo-thumb-wrap {
+    position: relative;
+    background: var(--surface2);
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .photo-thumb-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-thumb-wrap .upload-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-dim);
+  }
+  .photo-thumb-wrap .upload-prompt .icon {
+    font-size: 32px;
+    line-height: 1;
+  }
+  .photo-thumb-wrap .upload-prompt span {
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+  }
+  .photo-thumb-wrap input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: none;
+    padding: 0;
+  }
+  .photo-del-overlay {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(0,0,0,0.6);
+    border: none;
+    border-radius: 50%;
+    width: 26px; height: 26px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 2;
+  }
+  .photo-thumb-wrap:hover .photo-del-overlay { opacity: 1; }
+  .photo-info {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .photo-info input[type="text"] {
+    font-size: 13px;
+    width: 100%;
+  }
+  .photo-info .photo-meta {
+    display: flex;
+    gap: 8px;
+  }
+  .photo-info .photo-meta input {
+    flex: 1;
+    font-size: 12px;
+  }
+  .photo-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .photo-add-card {
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    aspect-ratio: 4/3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .photo-add-card:hover { border-color: var(--accent2); color: var(--accent2); }
+  .photo-add-card .add-icon { font-size: 28px; line-height: 1; }
+
+  /* LIGHTBOX */
+  #lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 90vw; max-height: 80vh; border-radius: 4px; object-fit: contain; }
+  #lightbox .lb-caption { color: var(--text); font-size: 14px; text-align: center; max-width: 600px; }
+  #lightbox .lb-close { position: fixed; top: 20px; right: 24px; background: none; border: none; color: #fff; font-size: 32px; cursor: pointer; }
+
+  /* PRINT COVER PAGE - hidden on screen */
+  #print-cover {
+    display: none;
+  }
+
+  /* PRINT */
+  @media print {
+    header, nav, .header-actions, .add-row-btn, .del-row, .btn,
+    #toast, #lightbox, .photo-del-overlay, .photo-thumb-wrap input[type="file"] { display: none !important; }
+
+    body { background: white; color: black; font-size: 11px; font-family: Arial, sans-serif; }
+
+    /* Cover page */
+    #print-cover {
+      display: flex !important;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 60px 60px;
+      page-break-after: always;
+      box-sizing: border-box;
+    }
+    #print-cover .pc-logo {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: #111;
+      margin-bottom: 4px;
+    }
+    #print-cover .pc-company {
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 48px;
+      padding-bottom: 24px;
+      border-bottom: 3px solid #111;
+      width: 100%;
+    }
+    #print-cover .pc-title {
+      font-size: 22px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #111;
+      margin-bottom: 32px;
+    }
+    #print-cover .pc-fields {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 48px;
+    }
+    #print-cover .pc-fields td {
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    #print-cover .pc-fields td:first-child {
+      color: #888;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      width: 160px;
+      padding-right: 20px;
+      font-weight: 600;
+    }
+    #print-cover .pc-fields td:last-child {
+      color: #111;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    #print-cover .pc-footer {
+      font-size: 10px;
+      color: #aaa;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: auto;
+    }
+
+    /* Running header on every section page */
+    .print-page-header {
+      display: flex !important;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #111;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+    .print-page-header .pph-left { font-weight: 700; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+    .print-page-header .pph-right { font-size: 10px; color: #888; text-align: right; line-height: 1.5; }
+
+    .section-panel { display: block !important; page-break-before: always; padding: 20px 0; }
+    .section-panel:first-child { page-break-before: avoid; }
+
+    .section-header { margin-bottom: 14px; }
+    .section-number { background: transparent !important; color: #555 !important; border: 1px solid #ccc; }
+    .section-title { color: #111 !important; }
+
+    .card { break-inside: avoid; border: 1px solid #bbb; margin-bottom: 14px; border-radius: 0; }
+    .card-header { background: #f0f0f0 !important; color: #444 !important; border-bottom: 1px solid #bbb; }
+
+    /* TABLE FIX - description columns must wrap, never truncate */
+    table { table-layout: fixed; width: 100%; border-collapse: collapse; }
+    th { background: #f5f5f5 !important; color: #555 !important; font-size: 9px; padding: 6px 8px; border-bottom: 1px solid #ccc; white-space: normal; word-wrap: break-word; }
+    td { padding: 5px 8px; border-bottom: 1px solid #e8e8e8; vertical-align: top; word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
+
+    /* Description column (first td) gets more width and wraps */
+    td:first-child { min-width: 0; word-break: break-word; }
+
+    /* Inputs and textareas: show as plain text, full width, wrap */
+    input[type="text"], input[type="date"], textarea {
+      border: none !important;
+      border-bottom: 1px solid #ccc !important;
+      background: transparent !important;
+      color: #111 !important;
+      font-size: 11px !important;
+      width: 100% !important;
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+      padding: 2px 0 !important;
+    }
+    textarea { min-height: 0 !important; resize: none !important; }
+    /* Description textareas keep their fixed 65px so rows are uniform */
+    td textarea[style*="65px"] {
+      height: 65px !important;
+      min-height: 65px !important;
+      max-height: 65px !important;
+      overflow: hidden !important;
+    }
+
+    /* Y/N toggle buttons: hide unselected, show selected cleanly */
+    .yn-btn { display: none !important; }
+    .yn-btn.active {
+      display: inline-block !important;
+      background: transparent !important;
+      border: 1px solid #333 !important;
+      color: #111 !important;
+      font-size: 10px !important;
+      padding: 2px 8px !important;
+      border-radius: 3px;
+    }
+    .yn-group { gap: 0 !important; }
+
+    /* Pass/fail */
+    .yn-btn.yes.active { border-color: #2a7a2a !important; color: #2a7a2a !important; }
+    .yn-btn.no.active { border-color: #aa2a2a !important; color: #aa2a2a !important; }
+
+    /* Checklist */
+    .checklist-grid { grid-template-columns: 1fr 1fr; }
+    .check-item { border: 1px solid #ccc; background: white; padding: 6px 10px; }
+    .check-item.done .ci-icon { background: #2a7a2a; border-color: #2a7a2a; }
+    .ci-label { font-size: 11px; }
+
+    /* Sign blocks */
+    .sign-grid { grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+    .sign-block { background: #f9f9f9; border: 1px solid #ddd; padding: 10px 12px; }
+    .sign-block label { color: #888; font-size: 9px; }
+    .sign-row { font-size: 11px; color: #555; margin-bottom: 4px; }
+
+    /* Info boxes */
+    .info-box { background: #f9f9f9 !important; border-left: 3px solid #999 !important; color: #555 !important; font-size: 11px; }
+
+    /* Photos */
+    .photo-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .photo-card { break-inside: avoid; border: 1px solid #ccc; border-radius: 0; }
+    .photo-thumb-wrap { aspect-ratio: 4/3; background: #f0f0f0 !important; }
+    .photo-thumb-wrap .upload-prompt { display: none; }
+    .photo-info { padding: 8px; }
+    .photo-num { color: #888 !important; }
+    .photo-add-card { display: none !important; }
+
+    tr { page-break-inside: avoid; }
+  }
+
+  @media (max-width: 700px) {
+    .sign-grid { grid-template-columns: 1fr; }
+    .checklist-grid { grid-template-columns: 1fr; }
+    .header-info { flex-wrap: wrap; gap: 14px; }
+    .header-field input { width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-brand">
+    <img src="Picture1.jpg" alt="MSC" style="height:58px;">
+  </div>
+  <div class="header-info">
+    <div class="header-field">
+      <label>Project</label>
+      <input type="text" id="hdr-project" placeholder="Project Name" data-hdr="project">
+    </div>
+    <div class="header-field">
+      <label>Customer</label>
+      <input type="text" id="hdr-customer" placeholder="Customer Name" data-hdr="customer">
+    </div>
+    <div class="header-field">
+      <label>Switchboard Ref</label>
+      <input type="text" id="hdr-ref" placeholder="REF / Serial No." data-hdr="ref">
+    </div>
+    <div class="header-field">
+      <label>Project No.</label>
+      <input type="text" id="hdr-projno" placeholder="TBC" data-hdr="projno">
+    </div>
+    <div class="header-field">
+      <label>FAT Date</label>
+      <input type="date" id="hdr-date" data-hdr="date">
+    </div>
+  </div>
+  <div class="header-actions">
+    <span id="save-status"><span class="dot"></span> Not saved</span>
+    <button class="btn btn-ghost" onclick="clearData()">Reset</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('open-file-input').click()">📂 Open JSON</button>
+    <input type="file" id="open-file-input" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="btn btn-ghost" onclick="exportData()">Export JSON</button>
+    <button class="btn btn-ghost" onclick="printPDF()" style="border-color:var(--accent2);color:var(--accent2)">🖨 Print / PDF</button>
+    <button class="btn btn-primary" onclick="saveData()">Save</button>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav id="tab-nav">
+  <button class="tab-btn active" onclick="goTab(0)"><span class="sec-num">2</span>Visual</button>
+  <button class="tab-btn" onclick="goTab(1)"><span class="sec-num">3</span>Torque</button>
+  <button class="tab-btn" onclick="goTab(2)"><span class="sec-num">4</span>Continuity</button>
+  <button class="tab-btn" onclick="goTab(3)"><span class="sec-num">5</span>Ductor</button>
+  <button class="tab-btn" onclick="goTab(4)"><span class="sec-num">6</span>Insulation / HV</button>
+  <button class="tab-btn" onclick="goTab(5)"><span class="sec-num">7</span>Current Injection</button>
+  <button class="tab-btn" onclick="goTab(6)"><span class="sec-num">8</span>Function Tests</button>
+  <button class="tab-btn" onclick="goTab(7)"><span class="sec-num">9</span>Comments</button>
+  <button class="tab-btn" onclick="goTab(8)"><span class="sec-num">10</span>Final Check</button>
+  <button class="tab-btn" onclick="goTab(9)"><span class="sec-num">📷</span>Photos</button>
+</nav>
+
+<!-- PRINT COVER PAGE (hidden on screen, visible in print) -->
+<div id="print-cover">
+  <img src="Picture1.jpg" alt="MSC" style="height:60px; margin-bottom:16px;">
+  <div class="pc-company">Manor Switchgear &amp; Controls Ltd</div>
+  <div class="pc-title">Panel Room Testing of LV Switchboard<br>Factory Acceptance Test</div>
+  <table class="pc-fields">
+    <tr><td>Project</td><td id="pc-project">—</td></tr>
+    <tr><td>Customer</td><td id="pc-customer">—</td></tr>
+    <tr><td>Switchboard Ref</td><td id="pc-ref">—</td></tr>
+    <tr><td>Project No.</td><td id="pc-projno">—</td></tr>
+    <tr><td>FAT Date</td><td id="pc-date">—</td></tr>
+  </table>
+  <div class="pc-footer">Method Statement / Test Procedure &nbsp;·&nbsp; Manor Switchgear &amp; Controls Ltd Internal Document</div>
+</div>
+
+<main>
+
+<!-- ═══════════════ SECTION 2: VISUAL ═══════════════ -->
+<div class="section-panel active" id="panel-0">
+  <div class="print-page-header" style="display:none">
+    <span class="pph-left">MSC &mdash; Factory Acceptance Test &mdash; Section 2: Visual Examination</span>
+    <span class="pph-right" id="pph-0"></span>
+  </div>
+  <div class="section-header">
+    <span class="section-number">Section 2</span>
+    <span class="section-title">Visual Examination</span>
+  </div>
+   <div class="info-box">A visual examination of the exterior of the switchboard will be carried out to check for the following:</div>
+
+  <div class="card">
+    <div class="card-header">Exterior Inspection</div>
+    <table id="tbl-exterior">
+      <thead><tr>
+        <th>Description</th>
+        <th style="width:140px">Client Inspector</th>
+        <th style="width:140px">MSC Test Engineer</th>
+        <th style="text-align:center">Comments</th>
+        <th style="width:30px"></th>
+      </tr></thead>
+      <tbody id="ext-body">
+      </tbody>
+    </table>
+    <button class="add-row-btn" onclick="addVisualRow('ext-body', 'exterior')">+ Add Item</button>
+  </div>
+
+  <div class="sign-grid" id="sign-ext">
+    <div class="sign-block">
+      <label>Checked by – MSC</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="ext-checked-name"></div>
+      <div class="sign-row"><span>Print:</span><input type="text" data-sign="ext-checked-print"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="ext-checked-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Witnessed by – Client</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="ext-witness-name"></div>
+      <div class="sign-row"><span>Organisation:</span><input type="text" data-sign="ext-witness-org"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="ext-witness-date"></div>
+    </div>
+  </div>
+
+  <br>
+  <div class="info-box">A visual examination of the interior of the switchboard will be carried out to check for the following:</div>
+  <div class="card">
+    <div class="card-header">Interior Inspection</div>
+    <table>
+      <thead><tr>
+        <th>Description</th>
+        <th style="width:140px">Client Inspector</th>
+        <th style="width:140px">MSC Test Engineer</th>
+        <th style="text-align:center">Comments</th>
+        <th style="width:30px"></th>
+      </tr></thead>
+      <tbody id="int-body">
+      </tbody>
+    </table>
+    <button class="add-row-btn" onclick="addVisualRow('int-body', 'interior')">+ Add Item</button>
+  </div>
+
+  <div class="sign-grid">
+    <div class="sign-block">
+      <label>Checked by – MSC</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="int-checked-name"></div>
+      <div class="sign-row"><span>Print:</span><input type="text" data-sign="int-checked-print"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="int-checked-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Witnessed by – Client</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="int-witness-name"></div>
+      <div class="sign-row"><span>Organisation:</span><input type="text" data-sign="int-witness-org"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="int-witness-date"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 3: TORQUE ═══════════════ -->
+<div class="section-panel" id="panel-1">
+  <div class="print-page-header" style="display:none">
+    <span class="pph-left">MSC &mdash; Factory Acceptance Test &mdash; Section 3: Torque Setting Check</span>
+    <span class="pph-right" id="pph-1"></span>
+  </div>
+  <div class="section-header">
+    <span class="section-number">Section 3</span>
+    <span class="section-title">Torque Setting Check</span>
+  </div>
+  <div class="info-box">To verify correct torque settings of critical electrical and mechanical connections on the LV switchboard, ensuring safety, reliability, and compliance with manufacturer specifications.</div>
+
+  <div class="card">
+    <div class="card-header">Torque Measurements</div>
+    <table>
+      <thead><tr>
+        <th>Section</th>
+        <th>Component</th>
+        <th>Connection Type</th>
+        <th>Torque Spec (Nm)</th>
+        <th>Measured (Nm)</th>
+        <th style="width:90px">Pass / Fail</th>
+        <th style="width:30px"></th>
+      </tr></thead>
+      <tbody id="torque-body"></tbody>
+    </table>
+    <button class="add-row-btn" onclick="addTorqueRow()">+ Add Row</button>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Equipment Details</div>
+    <table>
+      <tbody>
+        <tr><td style="width:220px;color:var(--text-dim)">Torque Wrench Serial Number</td><td><input type="text" data-eq="torque-serial"></td></tr>
+        <tr><td style="color:var(--text-dim)">Calibration Due Date</td><td><input type="date" data-eq="torque-cal"></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sign-grid">
+    <div class="sign-block">
+      <label>Tested by – MSC</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="torq-tested-name"></div>
+      <div class="sign-row"><span>Print:</span><input type="text" data-sign="torq-tested-print"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="torq-tested-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Witnessed by – Client</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="torq-witness-name"></div>
+      <div class="sign-row"><span>Organisation:</span><input type="text" data-sign="torq-witness-org"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="torq-witness-date"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 4: CONTINUITY ═══════════════ -->
+<div class="section-panel" id="panel-2">
+  <div class="print-page-header" style="display:none">
+    <span class="pph-left">MSC &mdash; Factory Acceptance Test &mdash; Section 4: Point-to-Point Continuity Checks</span>
+    <span class="pph-right" id="pph-2"></span>
+  </div>
+  <div class="section-header">
+    <span class="section-number">Section 4</span>
+    <span class="section-title">Point-to-Point Continuity Checks</span>
+  </div>
+  <div class="info-box">Refer to attached General Arrangement Drawing for test point locations.</div>
+
+  <div class="card">
+    <div class="card-header">Continuity Test Results</div>
+    <table>
+      <thead><tr>
+        <th>From Point</th>
+        <th>To Point</th>
+		<th style="text-align:center;width:80px">Tested</th>
+        <th style="text-align:center;width:130px">Client Witness</th>
+        <th style="width:30px"></th>
+      </tr></thead>
+      <tbody id="cont-body"></tbody>
+    </table>
+    <button class="add-row-btn" onclick="addContRow()">+ Add Row</button>
+  </div>
+
+  <div class="sign-grid">
+    <div class="sign-block">
+      <label>Tested by – MSC</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="cont-tested-name"></div>
+      <div class="sign-row"><span>Print:</span><input type="text" data-sign="cont-tested-print"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="cont-tested-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Witnessed by – Client</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="cont-witness-name"></div>
+      <div class="sign-row"><span>Organisation:</span><input type="text" data-sign="cont-witness-org"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="cont-witness-date"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 5: DUCTOR ═══════════════ -->
+<div class="section-panel" id="panel-3">
+  <div class="print-page-header" style="display:none">
+    <span class="pph-left">MSC &mdash; Factory Acceptance Test &mdash; Section 5: Ductor Testing</span>
+    <span class="pph-right" id="pph-3"></span>
+  </div>
+  <div class="section-header">
+    <span class="section-number">Section 5</span>
+    <span class="section-title">Ductor (Low-Ohm) Testing</span>
+  </div>
+  <div class="info-box">Establishes correct phasing and connection of all joints. Recommended tolerance: +20mΩ from manufacturer's quoted values. Confirms polarity — no phase crossovers between live side and load side of switchgear.</div>
+
+  <div class="card">
+    <div class="card-header">Ductor Test Results – Resistance in milliohms</div>
+    <table>
+      <thead><tr>
+        <th rowspan="2">From Point</th>
+        <th rowspan="2">To Point</th>
+		<th colspan="5" style="text-align:center;width:425px">Resistance of Main Circuit Busbar or Cable Terminal</th>
+		</tr>
+		<tr>
+        <th style="width:65px">L1 (mΩ)</th>
+        <th style="width:65px">L2 (mΩ)</th>
+        <th style="width:65px">L3 (mΩ)</th>
+        <th style="width:65px">N (mΩ)</th>
+        <th style="width:65px">E (mΩ)</th>
+        <th style="width:120px">Client Witness</th>
+        <th style="width:30px"></th>
+      </tr></thead>
+      <tbody id="ductor-body"></tbody>
+    </table>
+    <button class="add-row-btn" onclick="addDuctorRow()">+ Add Row</button>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Equipment Details</div>
+    <table>
+      <tbody>
+        <tr><td style="width:220px;color:var(--text-dim)">Ductor Serial Number</td><td><input type="text" data-eq="ductor-serial"></td></tr>
+        <tr><td style="color:var(--text-dim)">Calibration Due Date</td><td><input type="date" data-eq="ductor-cal"></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sign-grid">
+    <div class="sign-block">
+      <label>Tested by – MSC</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="duct-tested-name"></div>
+      <div class="sign-row"><span>Print:</span><input type="text" data-sign="duct-tested-print"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="duct-tested-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Witnessed by – Client</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="duct-witness-name"></div>
+      <div class="sign-row"><span>Organisation:</span><input type="text" data-sign="duct-witness-org"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="duct-witness-date"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 6: INSULATION / HV ═══════════════ -->
+<div class="section-panel" id="panel-4">
+  <div class="print-page-header" style="display:none">
+    <span class="pph-left">MSC &mdash; Factory Acceptance Test &mdash; Section 6: Insulation Resistance & Pressure Testing</span>
+    <span class="pph-right" id="pph-4"></span>
+  </div>
+  <div class="section-header">
+    <span class="section-number">Section 6</span>
+    <span class="section-title">Insulation Resistance &amp; Pressure Testing</span>
+  </div>
+  <div class="info-box">IR Test: DC Megger at 1000V. Expected ≥10MΩ in workshop. <br> HV Pressure Test: AC 2.0kV for 5 seconds per EN61439.</div>
+
+  <div class="card">
+    <div class="card-header">Preliminaries Checklist</div>
+    <table id="tbl-prelims">
+      <thead><tr><th>Item</th><th style="width:160px">Status</th></tr></thead>
+      <tbody id="prelim-body"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Insulation Resistance Test (1000V DC)</div>
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2">Test</th>
+          <th colspan="2" style="text-align:center">&gt;10MΩ Before</th>
+          <th colspan="2" style="text-align:center">&gt;10MΩ After</th>
+          <th rowspan="2" style="text-align:center">Actual Reading if &lt;10MΩ</th>
+        </tr>
+        <tr>
+          <th style="text-align:center;width:60px">Yes</th>
+          <th style="text-align:center;width:60px">No</th>
+          <th style="text-align:center;width:60px">Yes</th>
+          <th style="text-align:center;width:60px">No</th>
+        </tr>
+      </thead>
+      <tbody id="ir-body"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header">High Voltage Pressure Test – 2.0kV AC, 5 Seconds</div>
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2">Test</th>
+          <th colspan="2" style="text-align:center">Clear</th>
+          <th rowspan="2" style="text-align:center">Leakage Current (mA)</th>
+        </tr>
+        <tr>
+          <th style="text-align:center;width:60px">Yes</th>
+          <th style="text-align:center;width:60px">No</th>
+        </tr>
+      </thead>
+      <tbody id="hv-body"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Equipment Details</div>
+    <table>
+      <tbody>
+        <tr><td style="width:260px;color:var(--text-dim)">Insulation Resistance Tester Serial No.</td><td><input type="text" data-eq="ir-serial"></td></tr>
+        <tr><td style="color:var(--text-dim)">IR Tester Calibration Due Date</td><td><input type="date" data-eq="ir-cal"></td></tr>
+        <tr><td style="color:var(--text-dim)">Flash Tester Serial No.</td><td><input type="text" data-eq="flash-serial"></td></tr>
+        <tr><td style="color:var(--text-dim)">Flash Tester Calibration Due Date</td><td><input type="date" data-eq="flash-cal"></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sign-grid">
+    <div class="sign-block">
+      <label>Tested by – MSC</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="ins-tested-name"></div>
+      <div class="sign-row"><span>Print:</span><input type="text" data-sign="ins-tested-print"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="ins-tested-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Witnessed by – Client</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="ins-witness-name"></div>
+      <div class="sign-row"><span>Organisation:</span><input type="text" data-sign="ins-witness-org"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="ins-witness-date"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 7: CURRENT INJECTION ═══════════════ -->
+<div class="section-panel" id="panel-5">
+  <div class="print-page-header" style="display:none">
+    <span class="pph-left">MSC &mdash; Factory Acceptance Test &mdash; Section 7: Current Injection Testing</span>
+    <span class="pph-right" id="pph-5"></span>
+  </div>
+  <div class="section-header">
+    <span class="section-number">Section 7</span>
+    <span class="section-title">Current Injection Testing</span>
+  </div>
+  <div class="info-box">Primary injection of Class 1 Metering CTs to verify: correct CTs installed, wiring from CTs to Digital Meter inputs, and accuracy of Digital Meters vs. Primary Injection unit display.</div>
+
+  <div class="card">
+    <div class="card-header">Current Injection Results</div>
+    <table>
+      <thead><tr>
+        <th>Meter Description</th>
+        <th>Injected Current</th>
+        <th style="width:110px">L1 on Meter</th>
+        <th style="width:110px">L2 on Meter</th>
+        <th style="width:110px">L3 on Meter</th>
+        <th style="width:120px">Client Witness</th>
+        <th style="width:30px"></th>
+      </tr></thead>
+      <tbody id="ci-body"></tbody>
+    </table>
+    <button class="add-row-btn" onclick="addCIRow()">+ Add Row</button>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Equipment Details</div>
+    <table>
+      <tbody>
+        <tr><td style="width:220px;color:var(--text-dim)">Injection Set Serial Number</td><td><input type="text" data-eq="ci-serial"></td></tr>
+        <tr><td style="color:var(--text-dim)">Calibration Due Date</td><td><input type="date" data-eq="ci-cal"></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sign-grid">
+    <div class="sign-block">
+      <label>Tested by – MSC</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="ci-tested-name"></div>
+      <div class="sign-row"><span>Print:</span><input type="text" data-sign="ci-tested-print"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="ci-tested-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Witnessed by – Client</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="ci-witness-name"></div>
+      <div class="sign-row"><span>Organisation:</span><input type="text" data-sign="ci-witness-org"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="ci-witness-date"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 8: FUNCTION TESTS ═══════════════ -->
+<div class="section-panel" id="panel-6">
+  <div class="print-page-header" style="display:none">
+    <span class="pph-left">MSC &mdash; Factory Acceptance Test &mdash; Section 8: Electrical Function Testing</span>
+    <span class="pph-right" id="pph-6"></span>
+  </div>
+  <div class="section-header">
+    <span class="section-number">Section 8</span>
+    <span class="section-title">Electrical Function Testing</span>
+  </div>
+  <div class="info-box">BMS Volt-Free Contacts: Prove internal wiring of all volt-free contacts. All BMS terminals in dedicated BMS Terminal section. Contacts tested and marked on as-built drawings.</div>
+
+  <div class="card">
+    <div class="card-header">BMS Volt-Free Contact Tests</div>
+    <table>
+      <thead><tr>
+        <th>Section</th>
+        <th>Device</th>
+        <th style="width:80px">Open</th>
+        <th style="width:80px">Close</th>
+        <th style="width:80px">Trip</th>
+        <th style="width:120px">Client Witness</th>
+        <th style="width:30px"></th>
+      </tr></thead>
+      <tbody id="bms-body"></tbody>
+    </table>
+    <button class="add-row-btn" onclick="addBMSRow()">+ Add Row</button>
+  </div>
+
+  <div class="sign-grid">
+    <div class="sign-block">
+      <label>Tested by – MSC</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="bms-tested-name"></div>
+      <div class="sign-row"><span>Print:</span><input type="text" data-sign="bms-tested-print"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="bms-tested-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Witnessed by – Client</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="bms-witness-name"></div>
+      <div class="sign-row"><span>Organisation:</span><input type="text" data-sign="bms-witness-org"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="bms-witness-date"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 9: COMMENTS ═══════════════ -->
+<div class="section-panel" id="panel-7">
+  <div class="print-page-header" style="display:none">
+    <span class="pph-left">MSC &mdash; Factory Acceptance Test &mdash; Section 9: Comment & Sign-Off Sheet</span>
+    <span class="pph-right" id="pph-7"></span>
+  </div>
+  <div class="section-header">
+    <span class="section-number">Section 9</span>
+    <span class="section-title">Comment &amp; Sign-Off Sheet</span>
+  </div>
+  <div class="info-box">Use this sheet to record items needing attention noticed during visual inspection or other tests. Sign off / initial in the right column when complete.</div>
+
+  <div class="card">
+    <div class="card-header">Action Items</div>
+    <table class="comment-table">
+      <thead><tr>
+        <th style="width:40px">#</th>
+        <th>Description</th>
+        <th style="width:160px">Completed By</th>
+        <th style="width:100px">Date</th>
+        <th style="width:30px"></th>
+      </tr></thead>
+      <tbody id="comment-body"></tbody>
+    </table>
+    <button class="add-row-btn" onclick="addCommentRow()">+ Add Item</button>
+  </div>
+
+  <div class="sign-grid">
+    <div class="sign-block">
+      <label>Checked by Project Manager</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="pm-name"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="pm-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Tested by – MSC</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="cmt-tested-name"></div>
+      <div class="sign-row"><span>Print:</span><input type="text" data-sign="cmt-tested-print"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="cmt-tested-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Witnessed by – Client (1)</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="cmt-w1-name"></div>
+      <div class="sign-row"><span>Organisation:</span><input type="text" data-sign="cmt-w1-org"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="cmt-w1-date"></div>
+    </div>
+    <div class="sign-block">
+      <label>Witnessed by – Client (2)</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="cmt-w2-name"></div>
+      <div class="sign-row"><span>Organisation:</span><input type="text" data-sign="cmt-w2-org"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="cmt-w2-date"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 10: FINAL CHECKLIST ═══════════════ -->
+<div class="section-panel" id="panel-8">
+  <div class="print-page-header" style="display:none">
+    <span class="pph-left">MSC &mdash; Factory Acceptance Test &mdash; Section 10: Final Check List</span>
+    <span class="pph-right" id="pph-8"></span>
+  </div>
+  <div class="section-header">
+    <span class="section-number">Section 10</span>
+    <span class="section-title">Final Check List</span>
+  </div>
+  <div id="final-checklist" class="checklist-grid"></div>
+
+  <div class="sign-grid" style="margin-top:24px">
+    <div class="sign-block">
+      <label>Signed Off</label>
+      <div class="sign-row"><span>Signed:</span><input type="text" data-sign="final-signed"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="final-date"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PHOTOS ═══════════════ -->
+<div class="section-panel" id="panel-9">
+  <div class="print-page-header" style="display:none">
+    <span class="pph-left">MSC &mdash; Factory Acceptance Test &mdash; Photos: Photographic Record</span>
+    <span class="pph-right" id="pph-9"></span>
+  </div>
+  <div class="section-header">
+    <span class="section-number">Photos</span>
+    <span class="section-title">Photographic Record</span>
+  </div>
+  <div class="info-box">Upload photos taken during the FAT. Add a caption and section reference for each image. Click any photo to enlarge. Images are stored locally in the browser.</div>
+
+  <div class="photo-grid" id="photo-grid"></div>
+
+  <button class="add-row-btn" style="margin-top:0" onclick="addPhoto()">+ Add Photo</button>
+
+  <div class="sign-grid" style="margin-top:24px">
+    <div class="sign-block">
+      <label>Photographed by</label>
+      <div class="sign-row"><span>Name:</span><input type="text" data-sign="photo-name"></div>
+      <div class="sign-row"><span>Date:</span><input type="date" data-sign="photo-date"></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <img id="lb-img" src="" alt="">
+  <div class="lb-caption" id="lb-caption"></div>
+</div>
+
+<div id="toast">Saved ✓</div>
+
+<script>
+const STORE_KEY = 'msc_fat_v2';
+
+// ── DEFAULT DATA ──────────────────────────────────────────────
+const DEFAULT_EXTERIOR = [
+  'Layout Conforms to Drawing',
+  'All identifying labels have been fitted',
+  'All Warning labels have been fitted',
+  'All instruments have been fitted',
+  "Ensure all Incoming and Outgoing Supplies are lockable in the 'OFF' position",
+  'Ensure the Rotary Isolators on the compartment doors are of the correct rating',
+  'Ensure the Busbar mimic matches the internal busbar and has the correct symbols',
+  'Steelwork is free from physical damage',
+  'Paint finish is intact, rust-free and appropriate for the environment'
+];
+const DEFAULT_INTERIOR = [
+  'All shrouds have been fitted inside each section, covering live parts',
+  'All equipment is securely mounted and properly identified',
+  'All Warning labels have been fitted',
+  'Ensure all equipment is earthed as required',
+  'Ensure all busbars and Earth bars are properly marked with identifying phase discs',
+  'Ensure all fuses are fitted and of the correct rating',
+  'Ensure all internal trunking lid is fitted',
+  'Ensure all MCCBs are of the correct rating and have the correct trip unit installed'
+];
+const PRELIMS = [
+  'All fuses removed in Control Sections',
+  'Main Incomers closed',
+  'Outgoing Feeders Closed',
+  'TVSS Neutral & Earth Disconnected',
+  'RCBO Fly Leads Disconnected',
+  'N/E Link removed',
+  'Meters – Fuses removed and Neutrals Disconnected',
+  'Lamp Indicators – Fuses Removed'
+];
+const IR_TESTS = [
+  'Between L1 phase and Neutral',
+  'Between L2 phase and Neutral',
+  'Between L3 phase and Neutral',
+  'Between Neutral and Earth',
+  'Between L1 phase and Earth',
+  'Between L2 phase and Earth',
+  'Between L3 phase and Earth',
+  'Between L1 phase and L2 phase',
+  'Between L1 phase and L3 phase',
+  'Between L2 phase and L3 phase'
+];
+const HV_TESTS = IR_TESTS;
+const FINAL_ITEMS = [
+  'Re-Connect Neutral/Earth Link',
+  'Re-instate Surge protection',
+  'Check MCB/MCCB in on position',
+  'Re-instate fuses',
+  'Reset Restricted Earth Fault relays to Calculated Value',
+  'Reset Over Current and Earth Fault Relays',
+  "Re-instate All Long Time rating Plugs on ACB's",
+  'CT Test terminals linked out on Load side if installed',
+  'Set up trip units',
+  'Set up Thermostats',
+  'Turn all breakers to off position',
+  'Photos of finished switchboard'
+];
+
+// ── STATE ─────────────────────────────────────────────────────
+let state = loadState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return buildDefaultState();
+}
+
+function buildDefaultState() {
+  return {
+    header: {},
+    signs: {},
+    equipment: {},
+    exterior: DEFAULT_EXTERIOR.map(d => ({desc: d, client:'', engineer:'', comment:''})),
+    interior: DEFAULT_INTERIOR.map(d => ({desc: d, client:'', engineer:'', comment:''})),
+    torque: [{section:'A1', component:'Main Busbar Joint', conn:'M10 Bolt', spec:'45', measured:'', pf:''}],
+    continuity: [{from:'', to:'', l1:'', l2:'', l3:'', n:'', witness:''}],
+    ductor: [{from:'', to:'', l1:'', l2:'', l3:'', n:'', e:'', witness:''}],
+    prelims: PRELIMS.map(p => ({desc:p, val:''})),
+    ir: IR_TESTS.map(t => ({desc:t, beforeY:'', beforeN:'', afterY:'', afterN:'', actual:''})),
+    hv: HV_TESTS.map(t => ({desc:t, clearY:'', clearN:'', leakage:''})),
+    ci: [{meter:'', injected:'', l1:'', l2:'', l3:'', witness:''}],
+    bms: [{section:'', device:'', open:'', close:'', trip:'', witness:''}],
+    comments: Array.from({length:5}, (_,i) => ({num:i+1, desc:'', by:'', date:''})),
+    final: FINAL_ITEMS.map(i => ({label:i, done:false})),
+    photos: []
+  };
+}
+
+function saveData() {
+  collectFormValues();
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  showToast();
+  updateSaveStatus(true);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg || 'Saved ✓';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function updateSaveStatus(saved) {
+  const el = document.getElementById('save-status');
+  el.textContent = '';
+  const dot = document.createElement('span');
+  dot.className = 'dot';
+  el.appendChild(dot);
+  el.appendChild(document.createTextNode(saved ? ' Saved' : ' Unsaved changes'));
+  el.className = saved ? 'saved' : '';
+}
+
+function clearData() {
+  if (!confirm('Reset ALL form data? This cannot be undone.')) return;
+  state = buildDefaultState();
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  location.reload();
+}
+
+function exportData() {
+  collectFormValues();
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const proj = state.header.project || 'MSC';
+  const dt = state.header.date || new Date().toISOString().slice(0,10);
+  a.download = `FAT_${proj}_${dt}.json`.replace(/\s+/g,'_');
+  a.click();
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      // Merge parsed data over a fresh default state so any missing keys are filled in
+      const fresh = buildDefaultState();
+      state = Object.assign(fresh, parsed);
+      // Save to localStorage so it persists
+      localStorage.setItem(STORE_KEY, JSON.stringify(state));
+      // Re-render everything
+      renderVisual('ext-body', 'exterior');
+      renderVisual('int-body', 'interior');
+      renderTorque();
+      renderCont();
+      renderDuctor();
+      renderPrelims();
+      renderIR();
+      renderHV();
+      renderCI();
+      renderBMS();
+      renderComments();
+      renderFinal();
+      renderPhotos();
+      restoreFormValues();
+      updateSaveStatus(true);
+      showToast('Loaded ✓');
+    } catch(err) {
+      alert('Could not read file. Please make sure it is a valid MSC FAT JSON export.');
+    }
+  };
+  reader.readAsText(file);
+  // Reset input so the same file can be re-opened if needed
+  event.target.value = '';
+}
+
+function printPDF() {
+  saveData();
+  // Populate print cover page
+  const fmt = (v, fallback) => v && v.trim() ? v.trim() : fallback;
+  document.getElementById('pc-project').textContent  = fmt(state.header.project,  'N/A');
+  document.getElementById('pc-customer').textContent = fmt(state.header.customer, 'N/A');
+  document.getElementById('pc-ref').textContent      = fmt(state.header.ref,      'N/A');
+  document.getElementById('pc-projno').textContent   = fmt(state.header.projno,   'TBC');
+  // Format date nicely
+  const d = state.header.date;
+  document.getElementById('pc-date').textContent = d ? new Date(d + 'T12:00:00').toLocaleDateString('en-GB', {day:'2-digit', month:'long', year:'numeric'}) : 'N/A';
+
+  // Populate running page headers (project ref + date on each section)
+  const refLine = [fmt(state.header.project,''), fmt(state.header.ref,'')].filter(Boolean).join(' · ');
+  const dateLine = d ? new Date(d + 'T12:00:00').toLocaleDateString('en-GB') : '';
+  for (let i = 0; i <= 9; i++) {
+    const el = document.getElementById('pph-' + i);
+    if (el) el.innerHTML = (refLine ? refLine + '<br>' : '') + (dateLine || '');
+  }
+
+  window.print();
+}
+
+// ── PHOTOS ────────────────────────────────────────────────────
+function renderPhotos() {
+  if (!state.photos) state.photos = [];
+  const grid = document.getElementById('photo-grid');
+  grid.innerHTML = '';
+  state.photos.forEach((photo, i) => {
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+
+    // Thumb wrap
+    const wrap = document.createElement('div');
+    wrap.className = 'photo-thumb-wrap';
+
+    if (photo.src) {
+      const img = document.createElement('img');
+      img.src = photo.src;
+      img.alt = photo.caption || '';
+      img.onclick = (e) => { e.stopPropagation(); openLightbox(photo.src, photo.caption, photo.section); };
+      wrap.appendChild(img);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'photo-del-overlay';
+      delBtn.textContent = '×';
+      delBtn.title = 'Remove photo';
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (confirm('Remove this photo?')) {
+          state.photos.splice(i, 1);
+          renderPhotos();
+          updateSaveStatus(false);
+        }
+      };
+      wrap.appendChild(delBtn);
+    } else {
+      const prompt = document.createElement('div');
+      prompt.className = 'upload-prompt';
+      prompt.innerHTML = '<div class="icon">📷</div><span>Click to upload</span>';
+      wrap.appendChild(prompt);
+
+      const fileIn = document.createElement('input');
+      fileIn.type = 'file';
+      fileIn.accept = 'image/*';
+      fileIn.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          state.photos[i].src = ev.target.result;
+          renderPhotos();
+          updateSaveStatus(false);
+        };
+        reader.readAsDataURL(file);
+      };
+      wrap.appendChild(fileIn);
+    }
+
+    card.appendChild(wrap);
+
+    // Info
+    const info = document.createElement('div');
+    info.className = 'photo-info';
+
+    const num = document.createElement('div');
+    num.className = 'photo-num';
+    num.textContent = `Photo ${i + 1}`;
+    info.appendChild(num);
+
+    const captionIn = document.createElement('input');
+    captionIn.type = 'text';
+    captionIn.placeholder = 'Caption / description…';
+    captionIn.value = photo.caption || '';
+    captionIn.addEventListener('input', () => { state.photos[i].caption = captionIn.value; updateSaveStatus(false); });
+    info.appendChild(captionIn);
+
+    const meta = document.createElement('div');
+    meta.className = 'photo-meta';
+
+    const secIn = document.createElement('input');
+    secIn.type = 'text';
+    secIn.placeholder = 'Section ref (e.g. S2, S5)';
+    secIn.value = photo.section || '';
+    secIn.addEventListener('input', () => { state.photos[i].section = secIn.value; updateSaveStatus(false); });
+
+    const dateIn = document.createElement('input');
+    dateIn.type = 'date';
+    dateIn.value = photo.date || '';
+    dateIn.addEventListener('change', () => { state.photos[i].date = dateIn.value; updateSaveStatus(false); });
+
+    meta.appendChild(secIn);
+    meta.appendChild(dateIn);
+    info.appendChild(meta);
+    card.appendChild(info);
+    grid.appendChild(card);
+  });
+}
+
+function addPhoto() {
+  if (!state.photos) state.photos = [];
+  state.photos.push({src:'', caption:'', section:'', date:''});
+  renderPhotos();
+  updateSaveStatus(false);
+}
+
+function openLightbox(src, caption, section) {
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lb-caption').textContent = [caption, section ? `[${section}]` : ''].filter(Boolean).join(' — ');
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+// ── AUTO-SAVE on input ────────────────────────────────────────
+document.addEventListener('input', () => { updateSaveStatus(false); });
+document.addEventListener('change', () => { updateSaveStatus(false); });
+
+// ── TAB NAV ───────────────────────────────────────────────────
+function goTab(idx) {
+  document.querySelectorAll('.section-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+}
+
+// ── COLLECT FORM VALUES INTO STATE ────────────────────────────
+function collectFormValues() {
+  // header
+  document.querySelectorAll('[data-hdr]').forEach(el => { state.header[el.dataset.hdr] = el.value; });
+  // signs
+  document.querySelectorAll('[data-sign]').forEach(el => { state.signs[el.dataset.sign] = el.value; });
+  // equipment
+  document.querySelectorAll('[data-eq]').forEach(el => { state.equipment[el.dataset.eq] = el.value; });
+}
+
+// ── RENDER HELPERS ────────────────────────────────────────────
+function ynCell(val, key, onChange) {
+  const d = document.createElement('div');
+  d.className = 'yn-group';
+  ['Y','N'].forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'yn-btn ' + (opt==='Y'?'yes':'no') + (val===opt?' active':'');
+    b.textContent = opt;
+    b.onclick = () => {
+      d.querySelectorAll('.yn-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      onChange(opt);
+      updateSaveStatus(false);
+    };
+    d.appendChild(b);
+  });
+  return d;
+}
+
+function pfCell(val, onChange) {
+  const d = document.createElement('div');
+  d.className = 'yn-group';
+  ['Pass','Fail'].forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'yn-btn ' + (opt==='Pass'?'yes':'no') + (val===opt?' active':'');
+    b.textContent = opt;
+    b.onclick = () => {
+      d.querySelectorAll('.yn-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      onChange(opt);
+      updateSaveStatus(false);
+    };
+    d.appendChild(b);
+  });
+  return d;
+}
+
+function textInput(val, cls, onChange) {
+  const i = document.createElement('input');
+  i.type = 'text';
+  if (cls) i.className = cls;
+  i.value = val || '';
+  i.addEventListener('input', () => { onChange(i.value); });
+  return i;
+}
+
+function delBtn(onClick) {
+  const b = document.createElement('button');
+  b.className = 'del-row';
+  b.textContent = '×';
+  b.onclick = onClick;
+  return b;
+}
+
+// ── VISUAL INSPECTION ─────────────────────────────────────────
+function renderVisual(tbodyId, arrKey) {
+  const tbody = document.getElementById(tbodyId);
+  tbody.innerHTML = '';
+  state[arrKey].forEach((row, i) => {
+    const tr = document.createElement('tr');
+
+    // Description — fixed 65px height so it prints consistently without adjustment
+    const tdDesc = document.createElement('td');
+    tdDesc.style.minWidth = '0';
+    const ta = document.createElement('textarea');
+    ta.value = row.desc || '';
+    ta.style.width = '100%';
+    ta.style.height = '65px';
+    ta.style.minHeight = '65px';
+    ta.style.maxHeight = '65px';
+    ta.style.resize = 'none';
+    ta.addEventListener('input', () => { state[arrKey][i].desc = ta.value; });
+    tdDesc.appendChild(ta);
+    tr.appendChild(tdDesc);
+
+    // Client
+    const tdClient = document.createElement('td');
+    tdClient.appendChild(ynCell(row.client, '', v => { state[arrKey][i].client = v; }));
+    tr.appendChild(tdClient);
+
+    // Engineer
+    const tdEng = document.createElement('td');
+    tdEng.appendChild(ynCell(row.engineer, '', v => { state[arrKey][i].engineer = v; }));
+    tr.appendChild(tdEng);
+
+    // Comment
+    const tdCmt = document.createElement('td');
+    const taCmt = document.createElement('textarea');
+    taCmt.value = row.comment || '';
+    taCmt.rows = 1;
+    taCmt.addEventListener('input', () => { state[arrKey][i].comment = taCmt.value; autoResizeTA(taCmt); });
+    tdCmt.appendChild(taCmt);
+    tr.appendChild(tdCmt);
+
+    // Delete
+    const tdDel = document.createElement('td');
+    tdDel.appendChild(delBtn(() => { state[arrKey].splice(i,1); renderVisual(tbodyId, arrKey); updateSaveStatus(false); }));
+    tr.appendChild(tdDel);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function autoResizeTA(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+function addVisualRow(tbodyId, arrKey) {
+  state[arrKey].push({desc:'', client:'', engineer:'', comment:''});
+  renderVisual(tbodyId, arrKey);
+}
+
+// ── TORQUE ────────────────────────────────────────────────────
+function renderTorque() {
+  const tbody = document.getElementById('torque-body');
+  tbody.innerHTML = '';
+  state.torque.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    ['section','component','conn','spec','measured'].forEach(k => {
+      const td = document.createElement('td');
+      td.appendChild(textInput(row[k], '', v => { state.torque[i][k] = v; }));
+      tr.appendChild(td);
+    });
+    const tdPF = document.createElement('td');
+    tdPF.appendChild(pfCell(row.pf, v => { state.torque[i].pf = v; }));
+    tr.appendChild(tdPF);
+    const tdDel = document.createElement('td');
+    tdDel.appendChild(delBtn(() => { state.torque.splice(i,1); renderTorque(); updateSaveStatus(false); }));
+    tr.appendChild(tdDel);
+    tbody.appendChild(tr);
+  });
+}
+function addTorqueRow() {
+  state.torque.push({section:'', component:'', conn:'', spec:'', measured:'', pf:''});
+  renderTorque();
+}
+
+// ── CONTINUITY ────────────────────────────────────────────────
+function renderCont() {
+  const tbody = document.getElementById('cont-body');
+  tbody.innerHTML = '';
+  state.continuity.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    ['from','to'].forEach(k => {
+      const td = document.createElement('td');
+      td.appendChild(textInput(row[k], '', v => { state.continuity[i][k] = v; }));
+      tr.appendChild(td);
+    });
+    ['Tested'].forEach(k => {
+      const td = document.createElement('td');
+      td.appendChild(ynCell(row[k], '', v => { state.continuity[i][k] = v; }));
+      tr.appendChild(td);
+    });
+    const tdW = document.createElement('td');
+    tdW.appendChild(textInput(row.witness, '', v => { state.continuity[i].witness = v; }));
+    tr.appendChild(tdW);
+    const tdDel = document.createElement('td');
+    tdDel.appendChild(delBtn(() => { state.continuity.splice(i,1); renderCont(); updateSaveStatus(false); }));
+    tr.appendChild(tdDel);
+    tbody.appendChild(tr);
+  });
+}
+function addContRow() {
+  state.continuity.push({from:'', to:'', Tested:'', witness:''});
+  renderCont();
+}
+
+// ── DUCTOR ────────────────────────────────────────────────────
+function renderDuctor() {
+  const tbody = document.getElementById('ductor-body');
+  tbody.innerHTML = '';
+  state.ductor.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    ['from','to','l1','l2','l3','n','e'].forEach(k => {
+      const td = document.createElement('td');
+      td.appendChild(textInput(row[k], '', v => { state.ductor[i][k] = v; }));
+      tr.appendChild(td);
+    });
+    const tdW = document.createElement('td');
+    tdW.appendChild(textInput(row.witness, '', v => { state.ductor[i].witness = v; }));
+    tr.appendChild(tdW);
+    const tdDel = document.createElement('td');
+    tdDel.appendChild(delBtn(() => { state.ductor.splice(i,1); renderDuctor(); updateSaveStatus(false); }));
+    tr.appendChild(tdDel);
+    tbody.appendChild(tr);
+  });
+}
+function addDuctorRow() {
+  state.ductor.push({from:'', to:'', l1:'', l2:'', l3:'', n:'', e:'', witness:''});
+  renderDuctor();
+}
+
+// ── PRELIMS / IR / HV ─────────────────────────────────────────
+function renderPrelims() {
+  const tbody = document.getElementById('prelim-body');
+  tbody.innerHTML = '';
+  state.prelims.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    const tdD = document.createElement('td'); tdD.textContent = row.desc; tr.appendChild(tdD);
+    const tdV = document.createElement('td');
+    tdV.appendChild(ynCell(row.val, '', v => { state.prelims[i].val = v; }));
+    tr.appendChild(tdV);
+    tbody.appendChild(tr);
+  });
+}
+
+function renderIR() {
+  const tbody = document.getElementById('ir-body');
+  tbody.innerHTML = '';
+  state.ir.forEach((row, i) => {
+    const tr = document.createElement('tr');
+
+    // Test description
+    const tdD = document.createElement('td');
+    tdD.textContent = row.desc;
+    tr.appendChild(tdD);
+
+    // >10MΩ Before – Y button
+    const tdBY = document.createElement('td'); tdBY.style.textAlign = 'center';
+    tdBY.appendChild(singleToggle(row.beforeY === 'Y', () => {
+      state.ir[i].beforeY = state.ir[i].beforeY === 'Y' ? '' : 'Y';
+      renderIR(); updateSaveStatus(false);
+    }, 'Y', 'yes'));
+    tr.appendChild(tdBY);
+
+    // >10MΩ Before – N button
+    const tdBN = document.createElement('td'); tdBN.style.textAlign = 'center';
+    tdBN.appendChild(singleToggle(row.beforeY === 'N', () => {
+      state.ir[i].beforeY = state.ir[i].beforeY === 'N' ? '' : 'N';
+      renderIR(); updateSaveStatus(false);
+    }, 'N', 'no'));
+    tr.appendChild(tdBN);
+
+    // >10MΩ After – Y button
+    const tdAY = document.createElement('td'); tdAY.style.textAlign = 'center';
+    tdAY.appendChild(singleToggle(row.afterY === 'Y', () => {
+      state.ir[i].afterY = state.ir[i].afterY === 'Y' ? '' : 'Y';
+      renderIR(); updateSaveStatus(false);
+    }, 'Y', 'yes'));
+    tr.appendChild(tdAY);
+
+    // >10MΩ After – N button
+    const tdAN = document.createElement('td'); tdAN.style.textAlign = 'center';
+    tdAN.appendChild(singleToggle(row.afterY === 'N', () => {
+      state.ir[i].afterY = state.ir[i].afterY === 'N' ? '' : 'N';
+      renderIR(); updateSaveStatus(false);
+    }, 'N', 'no'));
+    tr.appendChild(tdAN);
+
+    // Actual reading
+    const tdAct = document.createElement('td');
+    tdAct.appendChild(textInput(row.actual, '', v => { state.ir[i].actual = v; }));
+    tr.appendChild(tdAct);
+
+    tbody.appendChild(tr);
+  });
+}
+
+// Single toggle button — active or not, independent of siblings
+function singleToggle(isActive, onClick, label, type) {
+  const b = document.createElement('button');
+  b.className = 'yn-btn ' + type + (isActive ? ' active' : '');
+  b.textContent = label;
+  b.onclick = onClick;
+  return b;
+}
+
+function renderHV() {
+  const tbody = document.getElementById('hv-body');
+  tbody.innerHTML = '';
+  state.hv.forEach((row, i) => {
+    const tr = document.createElement('tr');
+
+    const tdD = document.createElement('td');
+    tdD.textContent = row.desc;
+    tr.appendChild(tdD);
+
+    // Clear – Y
+    const tdCY = document.createElement('td'); tdCY.style.textAlign = 'center';
+    tdCY.appendChild(singleToggle(row.clearY === 'Y', () => {
+      state.hv[i].clearY = state.hv[i].clearY === 'Y' ? '' : 'Y';
+      renderHV(); updateSaveStatus(false);
+    }, 'Y', 'yes'));
+    tr.appendChild(tdCY);
+
+    // Clear – N
+    const tdCN = document.createElement('td'); tdCN.style.textAlign = 'center';
+    tdCN.appendChild(singleToggle(row.clearY === 'N', () => {
+      state.hv[i].clearY = state.hv[i].clearY === 'N' ? '' : 'N';
+      renderHV(); updateSaveStatus(false);
+    }, 'N', 'no'));
+    tr.appendChild(tdCN);
+
+    // Leakage current
+    const tdL = document.createElement('td');
+    tdL.appendChild(textInput(row.leakage, '', v => { state.hv[i].leakage = v; }));
+    tr.appendChild(tdL);
+
+    tbody.appendChild(tr);
+  });
+}
+
+// ── CURRENT INJECTION ─────────────────────────────────────────
+function renderCI() {
+  const tbody = document.getElementById('ci-body');
+  tbody.innerHTML = '';
+  state.ci.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    ['meter','injected','l1','l2','l3','witness'].forEach(k => {
+      const td = document.createElement('td');
+      td.appendChild(textInput(row[k], '', v => { state.ci[i][k] = v; }));
+      tr.appendChild(td);
+    });
+    const tdDel = document.createElement('td');
+    tdDel.appendChild(delBtn(() => { state.ci.splice(i,1); renderCI(); updateSaveStatus(false); }));
+    tr.appendChild(tdDel);
+    tbody.appendChild(tr);
+  });
+}
+function addCIRow() {
+  state.ci.push({meter:'', injected:'', l1:'', l2:'', l3:'', witness:''});
+  renderCI();
+}
+
+// ── BMS ───────────────────────────────────────────────────────
+function renderBMS() {
+  const tbody = document.getElementById('bms-body');
+  tbody.innerHTML = '';
+  state.bms.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    ['section','device'].forEach(k => {
+      const td = document.createElement('td');
+      td.appendChild(textInput(row[k], '', v => { state.bms[i][k] = v; }));
+      tr.appendChild(td);
+    });
+    ['open','close','trip'].forEach(k => {
+      const td = document.createElement('td');
+      td.appendChild(ynCell(row[k], '', v => { state.bms[i][k] = v; }));
+      tr.appendChild(td);
+    });
+    const tdW = document.createElement('td');
+    tdW.appendChild(textInput(row.witness, '', v => { state.bms[i].witness = v; }));
+    tr.appendChild(tdW);
+    const tdDel = document.createElement('td');
+    tdDel.appendChild(delBtn(() => { state.bms.splice(i,1); renderBMS(); updateSaveStatus(false); }));
+    tr.appendChild(tdDel);
+    tbody.appendChild(tr);
+  });
+}
+function addBMSRow() {
+  state.bms.push({section:'', device:'', open:'', close:'', trip:'', witness:''});
+  renderBMS();
+}
+
+// ── COMMENTS ──────────────────────────────────────────────────
+function renderComments() {
+  const tbody = document.getElementById('comment-body');
+  tbody.innerHTML = '';
+  state.comments.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    const tdN = document.createElement('td'); tdN.textContent = i+1; tr.appendChild(tdN);
+    const tdD = document.createElement('td');
+    const ta = document.createElement('textarea');
+    ta.value = row.desc || ''; ta.rows = 1;
+    ta.addEventListener('input', () => { state.comments[i].desc = ta.value; });
+    tdD.appendChild(ta); tr.appendChild(tdD);
+    const tdB = document.createElement('td'); tdB.appendChild(textInput(row.by, '', v => { state.comments[i].by = v; })); tr.appendChild(tdB);
+    const tdDate = document.createElement('td');
+    const dateIn = document.createElement('input'); dateIn.type='date'; dateIn.value=row.date||'';
+    dateIn.addEventListener('change', () => { state.comments[i].date = dateIn.value; });
+    tdDate.appendChild(dateIn); tr.appendChild(tdDate);
+    const tdDel = document.createElement('td');
+    tdDel.appendChild(delBtn(() => { state.comments.splice(i,1); renderComments(); updateSaveStatus(false); }));
+    tr.appendChild(tdDel);
+    tbody.appendChild(tr);
+  });
+}
+function addCommentRow() {
+  state.comments.push({desc:'', by:'', date:''});
+  renderComments();
+}
+
+// ── FINAL CHECKLIST ───────────────────────────────────────────
+function renderFinal() {
+  const container = document.getElementById('final-checklist');
+  container.innerHTML = '';
+  state.final.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'check-item' + (item.done ? ' done' : '');
+    div.onclick = () => {
+      state.final[i].done = !state.final[i].done;
+      renderFinal();
+      updateSaveStatus(false);
+    };
+    const icon = document.createElement('div');
+    icon.className = 'ci-icon';
+    icon.textContent = item.done ? '✓' : '';
+    const label = document.createElement('span');
+    label.className = 'ci-label';
+    label.textContent = item.label;
+    div.appendChild(icon);
+    div.appendChild(label);
+    container.appendChild(div);
+  });
+}
+
+// ── RESTORE FORM VALUES ───────────────────────────────────────
+function restoreFormValues() {
+  Object.entries(state.header).forEach(([k,v]) => {
+    const el = document.querySelector(`[data-hdr="${k}"]`);
+    if (el) el.value = v;
+  });
+  Object.entries(state.signs).forEach(([k,v]) => {
+    const el = document.querySelector(`[data-sign="${k}"]`);
+    if (el) el.value = v;
+  });
+  Object.entries(state.equipment).forEach(([k,v]) => {
+    const el = document.querySelector(`[data-eq="${k}"]`);
+    if (el) el.value = v;
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+function init() {
+  renderVisual('ext-body', 'exterior');
+  renderVisual('int-body', 'interior');
+  renderTorque();
+  renderCont();
+  renderDuctor();
+  renderPrelims();
+  renderIR();
+  renderHV();
+  renderCI();
+  renderBMS();
+  renderComments();
+  renderFinal();
+  renderPhotos();
+  restoreFormValues();
+
+  // Auto-save every 60s
+  setInterval(() => {
+    collectFormValues();
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    updateSaveStatus(true);
+  }, 60000);
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); saveData(); }
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  if (localStorage.getItem(STORE_KEY)) updateSaveStatus(true);
+}
+
+init();
+
+// Register service worker for PWA / offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.log('Service worker registration failed:', err);
+    });
+  });
+}
+</script>
+</body>
+</html>

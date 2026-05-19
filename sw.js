@@ -1,0 +1,44 @@
+const CACHE_NAME = 'msc-fat-v1';
+
+// Files to cache for offline use
+const FILES_TO_CACHE = [
+  './Manor_Switchgear_FAT_Application_Testing_004.html',
+  './manifest.json',
+  './Picture1.jpg'
+];
+
+// Install — cache all core files
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(FILES_TO_CACHE);
+    })
+  );
+  self.skipWaiting();
+});
+
+// Activate — clean up old caches
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+      )
+    )
+  );
+  self.clients.claim();
+});
+
+// Fetch — serve from cache, fall back to network
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(cached => {
+      return cached || fetch(event.request).catch(() => {
+        // If both cache and network fail, return a simple offline message
+        return new Response('<h2>You are offline and this resource is not cached.</h2>', {
+          headers: { 'Content-Type': 'text/html' }
+        });
+      });
+    })
+  );
+});
