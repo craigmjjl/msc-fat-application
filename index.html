@@ -1560,15 +1560,33 @@ function clearData() {
   location.reload();
 }
 
-function exportData() {
+async function exportData() {
   collectFormValues();
-  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const json = JSON.stringify(state, null, 2);
   const proj = state.header.project || 'MSC';
   const dt = state.header.date || new Date().toISOString().slice(0,10);
-  a.download = `FAT_${proj}_${dt}.json`.replace(/\s+/g,'_');
-  a.click();
+  const fileName = `FAT_${proj}_${dt}.json`.replace(/\s+/g,'_');
+
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: fileName,
+        types: [{ description: 'JSON File', accept: { 'application/json': ['.json'] } }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(json);
+      await writable.close();
+      showToast('Saved ✓');
+    } catch (err) {
+      if (err.name !== 'AbortError') showToast('Save failed');
+    }
+  } else {
+    const blob = new Blob([json], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    a.click();
+  }
 }
 
 function importData(event) {
