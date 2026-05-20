@@ -4,7 +4,7 @@ const CACHE_NAME = 'msc-fat-v1';
 const FILES_TO_CACHE = [
   './Manor_Switchgear_FAT_Application_Testing_004.html',
   './manifest.json',
-  './Picture1.jpg'
+  './Picture1.png'
 ];
 
 // Install — cache all core files
