@@ -761,7 +761,7 @@
     /* Inputs and textareas: show as plain text, full width, wrap */
     input[type="text"], input[type="date"], textarea {
       border: none !important;
-      border-bottom: 1px solid #ccc !important;
+      border-bottom: none !important;
       background: transparent !important;
       color: #111 !important;
       font-size: 11px !important;
@@ -771,14 +771,14 @@
       text-overflow: clip !important;
       padding: 2px 0 !important;
     }
-    textarea { min-height: 0 !important; resize: none !important; }
-    /* Description textareas keep their fixed 65px so rows are uniform */
-    td textarea[style*="65px"] {
-      height: 65px !important;
-      min-height: 65px !important;
-      max-height: 65px !important;
-      overflow: hidden !important;
-    }
+	textarea { min-height: 0 !important; resize: none !important; border: none !important; }
+	/* Description textareas collapse to fit content in print */
+	td textarea {
+	  height: auto !important;
+	  min-height: 0 !important;
+	  max-height: none !important;
+	  overflow: visible !important;
+	}
 
     /* Y/N toggle buttons: hide unselected, show selected cleanly */
     .yn-btn { display: none !important; }
