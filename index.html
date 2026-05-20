@@ -651,6 +651,8 @@
     display: none;
   }
 
+  .print-text { display: none; }
+
   /* PRINT */
   @media print {
     header, nav, .header-actions, .add-row-btn, .del-row, .btn,
@@ -773,17 +775,8 @@
     }
 	textarea { min-height: 0 !important; resize: none !important; border: none !important; }
 	/* Description textareas collapse to fit content in print */
-	td textarea {
-	  height: auto !important;
-	  min-height: 0 !important;
-	  max-height: none !important;
-	  overflow: visible !important;
-	  resize: none !important;
-	  appearance: none !important;
-	  -webkit-appearance: none !important;
-	  white-space: pre-wrap !important;
-	  word-wrap: break-word !important;
-	}
+	td textarea { display: none !important; }
+	td .print-text { display: block !important; white-space: pre-wrap; word-wrap: break-word; font-size: 11px; color: #111; }
 
     /* Y/N toggle buttons: hide unselected, show selected cleanly */
     .yn-btn { display: none !important; }
@@ -1836,16 +1829,23 @@ function renderVisual(tbodyId, arrKey) {
     // Description — fixed 65px height so it prints consistently without adjustment
     const tdDesc = document.createElement('td');
     tdDesc.style.minWidth = '0';
-    const ta = document.createElement('textarea');
-    ta.value = row.desc || '';
-    ta.style.width = '100%';
-    ta.style.height = '65px';
-    ta.style.minHeight = '65px';
-    ta.style.maxHeight = '65px';
-    ta.style.resize = 'none';
-    ta.addEventListener('input', () => { state[arrKey][i].desc = ta.value; });
-    tdDesc.appendChild(ta);
-    tr.appendChild(tdDesc);
+	const ta = document.createElement('textarea');
+	ta.value = row.desc || '';
+	ta.style.width = '100%';
+	ta.style.height = '65px';
+	ta.style.minHeight = '65px';
+	ta.style.maxHeight = '65px';
+	ta.style.resize = 'none';
+	ta.addEventListener('input', () => {
+	  state[arrKey][i].desc = ta.value;
+	  printDiv.textContent = ta.value;
+	});
+	tdDesc.appendChild(ta);
+
+const printDiv = document.createElement('div');
+printDiv.className = 'print-text';
+printDiv.textContent = row.desc || '';
+tdDesc.appendChild(printDiv);
 
     // Client
     const tdClient = document.createElement('td');
