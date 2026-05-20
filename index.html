@@ -1846,6 +1846,7 @@ const printDiv = document.createElement('div');
 printDiv.className = 'print-text';
 printDiv.textContent = row.desc || '';
 tdDesc.appendChild(printDiv);
+tr.appendChild(tdDesc);
 
     // Client
     const tdClient = document.createElement('td');
