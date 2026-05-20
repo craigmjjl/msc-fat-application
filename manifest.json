@@ -1,5 +1,5 @@
 {
-  "name": "Manor Switchgear FAT",
+  "name": "Manor Switchgear & Controls Ltd BETA FAT Application",
   "short_name": "MSC FAT",
   "description": "Factory Acceptance Test application for LV Switchboard testing",
   "start_url": "./index.html",
