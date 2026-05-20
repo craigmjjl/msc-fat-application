@@ -5,7 +5,9 @@ const FILES_TO_CACHE = [
   './index.html',
   './manifest.json',
   './sw.js',
-  './Picture1.png'
+  './Picture1.png',
+  './icon1.png',
+  './icon2.png'
 ];
 
 // Install — cache all core files
