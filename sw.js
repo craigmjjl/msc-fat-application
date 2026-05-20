@@ -2,8 +2,9 @@ const CACHE_NAME = 'msc-fat-v1';
 
 // Files to cache for offline use
 const FILES_TO_CACHE = [
-  './Manor_Switchgear_FAT_Application_Testing_004.html',
+  './index.html',
   './manifest.json',
+  './sw.js',
   './Picture1.png'
 ];
 
